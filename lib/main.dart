@@ -10,11 +10,12 @@ import 'providers/places_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/verify_email_screen.dart';
 import 'screens/main_screen.dart';
+import 'firebase_options.dart';
 
 void main() async {
   // Required before calling any Firebase methods
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
