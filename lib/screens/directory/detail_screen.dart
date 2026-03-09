@@ -1,4 +1,3 @@
-// lib/screens/directory/detail_screen.dart
 // Shows full details of a selected listing.
 // Includes an embedded Google Map with a marker.
 // Has a "Get Directions" button that opens Google Maps for navigation.
@@ -22,12 +21,12 @@ class _DetailScreenState extends State<DetailScreen> {
 
   // Build a marker set for the place's coordinates
   Set<Marker> get _markers => {
-        Marker(
-          markerId: const MarkerId('place'),
-          position: LatLng(widget.place.latitude, widget.place.longitude),
-          infoWindow: InfoWindow(title: widget.place.name),
-        ),
-      };
+    Marker(
+      markerId: const MarkerId('place'),
+      position: LatLng(widget.place.latitude, widget.place.longitude),
+      infoWindow: InfoWindow(title: widget.place.name),
+    ),
+  };
 
   /// Open Google Maps with turn-by-turn directions to this location
   Future<void> _launchDirections() async {
@@ -81,7 +80,9 @@ class _DetailScreenState extends State<DetailScreen> {
                   // Category badge
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.amber,
                       borderRadius: BorderRadius.circular(20),
@@ -97,7 +98,9 @@ class _DetailScreenState extends State<DetailScreen> {
                   Text(
                     place.name,
                     style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
 
@@ -110,19 +113,22 @@ class _DetailScreenState extends State<DetailScreen> {
                   const SizedBox(height: 6),
 
                   // Coordinates
-                  _infoRow(Icons.gps_fixed,
-                      '${place.latitude}, ${place.longitude}'),
+                  _infoRow(
+                    Icons.gps_fixed,
+                    '${place.latitude}, ${place.longitude}',
+                  ),
                   const SizedBox(height: 16),
 
                   // Description
                   const Text(
                     'About',
-                    style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  Text(place.description,
-                      style: const TextStyle(color: Colors.black87)),
+                  Text(
+                    place.description,
+                    style: const TextStyle(color: Colors.black87),
+                  ),
                   const SizedBox(height: 24),
 
                   // Get Directions button
