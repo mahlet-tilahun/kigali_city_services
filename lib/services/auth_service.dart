@@ -35,10 +35,7 @@ class AuthService {
     // Step 2: Update the display name in Firebase Auth
     await credential.user!.updateDisplayName(displayName);
 
-    // Step 3: Send email verification
-    await credential.user!.sendEmailVerification();
-
-    // Step 4: Create a matching profile document in Firestore
+    // Step 3: Create Firestore profile FIRST before sending verification
     UserModel userProfile = UserModel(
       uid: credential.user!.uid,
       email: email,
@@ -48,6 +45,15 @@ class AuthService {
         .collection('users')
         .doc(credential.user!.uid)
         .set(userProfile.toMap());
+
+    // Step 4: Send verification email LAST
+    try {
+      await credential.user!.sendEmailVerification();
+    } catch (e) {
+      // Verification email failed but account was created
+      // User can request a new one later
+      print('Verification email failed: $e');
+    }
   }
 
   /// Log in an existing user.
@@ -75,8 +81,7 @@ class AuthService {
 
   /// Fetch the user profile from Firestore.
   Future<UserModel?> getUserProfile(String uid) async {
-    DocumentSnapshot doc =
-        await _firestore.collection('users').doc(uid).get();
+    DocumentSnapshot doc = await _firestore.collection('users').doc(uid).get();
     if (doc.exists) {
       return UserModel.fromMap(doc.data() as Map<String, dynamic>);
     }
@@ -84,8 +89,7 @@ class AuthService {
   }
 
   /// Update the notification preference for a user in Firestore.
-  Future<void> updateNotificationPreference(
-      String uid, bool enabled) async {
+  Future<void> updateNotificationPreference(String uid, bool enabled) async {
     await _firestore.collection('users').doc(uid).update({
       'notificationsEnabled': enabled,
     });
