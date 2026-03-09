@@ -1,4 +1,3 @@
-// lib/screens/directory/directory_screen.dart
 // Shows all listings from Firestore.
 // Users can search by name and filter by category.
 // Updates automatically whenever Firestore data changes (via PlacesProvider stream).
@@ -19,9 +18,7 @@ class DirectoryScreen extends StatelessWidget {
     final placesProvider = context.watch<PlacesProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kigali City Directory'),
-      ),
+      appBar: AppBar(title: const Text('Kigali City Directory')),
       body: Column(
         children: [
           // Search bar
@@ -35,8 +32,10 @@ class DirectoryScreen extends StatelessWidget {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 0,
+                  horizontal: 12,
+                ),
               ),
             ),
           ),
@@ -70,21 +69,22 @@ class DirectoryScreen extends StatelessWidget {
             child: placesProvider.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : placesProvider.filteredPlaces.isEmpty
-                    ? const Center(child: Text('No listings found.'))
-                    : ListView.builder(
-                        itemCount: placesProvider.filteredPlaces.length,
-                        itemBuilder: (context, index) {
-                          final place = placesProvider.filteredPlaces[index];
-                          return PlaceCard(
-                            place: place,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => DetailScreen(place: place)),
-                            ),
-                          );
-                        },
-                      ),
+                ? const Center(child: Text('No listings found.'))
+                : ListView.builder(
+                    itemCount: placesProvider.filteredPlaces.length,
+                    itemBuilder: (context, index) {
+                      final place = placesProvider.filteredPlaces[index];
+                      return PlaceCard(
+                        place: place,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailScreen(place: place),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

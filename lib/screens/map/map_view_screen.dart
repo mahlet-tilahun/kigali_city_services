@@ -1,4 +1,3 @@
-// lib/screens/map/map_view_screen.dart
 // Shows all listings as markers on a Google Map.
 // Tapping a marker navigates to the detail screen of that listing.
 
@@ -24,8 +23,7 @@ class _MapViewScreenState extends State<MapViewScreen> {
 
   /// Build a set of markers from the places list.
   /// Each marker shows the place name on tap.
-  Set<Marker> _buildMarkers(
-      List<PlaceModel> places, BuildContext context) {
+  Set<Marker> _buildMarkers(List<PlaceModel> places, BuildContext context) {
     return places.map((place) {
       return Marker(
         markerId: MarkerId(place.id ?? place.name),
@@ -36,8 +34,7 @@ class _MapViewScreenState extends State<MapViewScreen> {
           // Tapping the info window opens the detail screen
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (_) => DetailScreen(place: place)),
+            MaterialPageRoute(builder: (_) => DetailScreen(place: place)),
           ),
         ),
       );
