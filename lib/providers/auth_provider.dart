@@ -10,13 +10,11 @@ import '../models/user_model.dart';
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
 
-  // State variables
-  User? _firebaseUser; // Raw Firebase user object
-  UserModel? _userProfile; // Our custom user profile from Firestore
+  User? _firebaseUser;
+  UserModel? _userProfile;
   bool _isLoading = false;
   String? _errorMessage;
 
-  // Public getters — widgets read these to build their UI
   User? get firebaseUser => _firebaseUser;
   UserModel? get userProfile => _userProfile;
   bool get isLoading => _isLoading;
@@ -25,72 +23,84 @@ class AuthProvider extends ChangeNotifier {
   bool get isEmailVerified => _firebaseUser?.emailVerified ?? false;
 
   AuthProvider() {
-    // Listen to Firebase auth state changes.
-    // When user logs in or out, we update our state automatically.
     _authService.authStateChanges.listen((User? user) async {
-      _firebaseUser = user;
       if (user != null) {
-        // Reload to get the latest email verification status
         await user.reload();
         _firebaseUser = _authService.currentUser;
-        // Fetch the user profile from Firestore
         _userProfile = await _authService.getUserProfile(user.uid);
       } else {
+        _firebaseUser = null;
         _userProfile = null;
       }
-      notifyListeners(); // Tell all listening widgets to rebuild
+      notifyListeners();
     });
   }
 
-  /// Call this to sign up a new user.
-  /// Sets loading/error states so the UI can show a spinner or error message.
-  Future<void> signUp({
+  Future<bool> signUp({
     required String email,
     required String password,
     required String displayName,
   }) async {
-    _setLoading(true);
+    _isLoading = true;
     _errorMessage = null;
+    notifyListeners();
+
     try {
       await _authService.signUp(
         email: email,
         password: password,
         displayName: displayName,
       );
+      _isLoading = false;
+      notifyListeners();
+      return true;
     } on FirebaseAuthException catch (e) {
       _errorMessage = _getReadableError(e.code);
+      _isLoading = false;
+      notifyListeners();
+      return false;
     } catch (e) {
-      _errorMessage = 'Something went wrong. Please try again.';
-    } finally {
-      _setLoading(false);
+      _errorMessage = 'Error: ${e.toString()}';
+      _isLoading = false;
+      notifyListeners();
+      return false;
     }
   }
 
-  /// Call this to sign in an existing user.
-  Future<void> signIn({required String email, required String password}) async {
-    _setLoading(true);
+  Future<bool> signIn({required String email, required String password}) async {
+    _isLoading = true;
     _errorMessage = null;
+    notifyListeners();
+
     try {
       await _authService.signIn(email: email, password: password);
-      // Reload to check if email is verified
       await _firebaseUser?.reload();
       _firebaseUser = _authService.currentUser;
+      _isLoading = false;
       notifyListeners();
+      return true;
     } on FirebaseAuthException catch (e) {
       _errorMessage = _getReadableError(e.code);
+      _isLoading = false;
+      notifyListeners();
+      return false;
     } catch (e) {
-      _errorMessage = 'Something went wrong. Please try again.';
-    } finally {
-      _setLoading(false);
+      _errorMessage = 'Error: ${e.toString()}';
+      _isLoading = false;
+      notifyListeners();
+      return false;
     }
   }
 
-  /// Sign out the current user.
+  Future<void> checkEmailVerified() async {
+    _firebaseUser = _authService.currentUser;
+    notifyListeners();
+  }
+
   Future<void> signOut() async {
     await _authService.signOut();
   }
 
-  /// Toggle notifications preference and save it to Firestore.
   Future<void> toggleNotifications(bool value) async {
     if (_userProfile == null) return;
     _userProfile = _userProfile!.copyWith(notificationsEnabled: value);
@@ -98,13 +108,6 @@ class AuthProvider extends ChangeNotifier {
     await _authService.updateNotificationPreference(_userProfile!.uid, value);
   }
 
-  // Private helpers
-  void _setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
-
-  /// Convert Firebase error codes to user-friendly messages
   String _getReadableError(String code) {
     switch (code) {
       case 'email-already-in-use':
@@ -120,7 +123,7 @@ class AuthProvider extends ChangeNotifier {
       case 'too-many-requests':
         return 'Too many attempts. Please try again later.';
       default:
-        return 'Authentication error: $code';
+        return 'Error: $code';
     }
   }
 }
