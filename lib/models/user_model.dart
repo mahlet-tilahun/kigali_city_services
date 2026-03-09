@@ -1,11 +1,10 @@
-// lib/models/user_model.dart
 // Represents the user profile stored in Firestore under /users/{uid}
 
 class UserModel {
   final String uid;
   final String email;
   final String displayName;
-  final bool notificationsEnabled;  // local preference stored in Firestore
+  final bool notificationsEnabled; // local preference stored in Firestore
 
   UserModel({
     required this.uid,
