@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/auth_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -28,30 +28,49 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> _signup() async {
+    // Basic validation
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Please enter your name')));
       return;
     }
+    if (_emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter your email')));
+      return;
+    }
+    if (_passwordController.text.trim().length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 6 characters')),
+      );
+      return;
+    }
 
     final authProvider = context.read<AuthProvider>();
-    await authProvider.signUp(
+    final success = await authProvider.signUp(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
       displayName: _nameController.text.trim(),
     );
 
-    if (mounted && authProvider.errorMessage != null) {
+    if (!mounted) return;
+
+    if (success) {
+      // Pop back to login — AuthWrapper will automatically
+      // detect the new user and show VerifyEmailScreen
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } else {
+      // Show the REAL error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(authProvider.errorMessage!),
+          content: Text(authProvider.errorMessage ?? 'Signup failed'),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
         ),
       );
     }
-    // AuthWrapper in main.dart will automatically route to VerifyEmailScreen
-    // once authStateChanges fires
   }
 
   @override
@@ -75,16 +94,12 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               const Icon(Icons.person_add, size: 60, color: Colors.amber),
               const SizedBox(height: 24),
-
-              // Name field
               TextField(
                 controller: _nameController,
                 style: const TextStyle(color: Colors.white),
                 decoration: _inputDecoration('Full Name', Icons.person),
               ),
               const SizedBox(height: 16),
-
-              // Email field
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -92,8 +107,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 decoration: _inputDecoration('Email', Icons.email),
               ),
               const SizedBox(height: 16),
-
-              // Password field
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -112,7 +125,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-
               SizedBox(
                 width: double.infinity,
                 height: 50,
