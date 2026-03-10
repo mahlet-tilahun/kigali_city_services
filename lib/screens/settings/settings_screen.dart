@@ -35,9 +35,10 @@ class SettingsScreen extends StatelessWidget {
                       child: Text(
                         (user?.displayName ?? 'U')[0].toUpperCase(),
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -47,7 +48,9 @@ class SettingsScreen extends StatelessWidget {
                         Text(
                           user?.displayName ?? 'User',
                           style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           firebaseUser?.email ?? '',
@@ -97,13 +100,11 @@ class SettingsScreen extends StatelessWidget {
             Card(
               child: SwitchListTile(
                 title: const Text('Location Notifications'),
-                subtitle: const Text(
-                    'Get notified about services near you'),
+                subtitle: const Text('Get notified about services near you'),
                 value: user?.notificationsEnabled ?? false,
-                onChanged: (val) =>
-                    authProvider.toggleNotifications(val),
+                onChanged: (val) => authProvider.toggleNotifications(val),
                 secondary: const Icon(Icons.notifications),
-                activeColor: Colors.amber,
+                activeThumbColor: Colors.amber,
               ),
             ),
             const SizedBox(height: 8),
@@ -115,8 +116,7 @@ class SettingsScreen extends StatelessWidget {
                 child: const ListTile(
                   leading: Icon(Icons.info_outline, color: Colors.amber),
                   title: Text('Notifications are enabled'),
-                  subtitle: Text(
-                      'You will be notified about nearby services.'),
+                  subtitle: Text('You will be notified about nearby services.'),
                 ),
               ),
 
@@ -129,8 +129,10 @@ class SettingsScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => authProvider.signOut(),
                 icon: const Icon(Icons.logout, color: Colors.red),
-                label: const Text('Log Out',
-                    style: TextStyle(color: Colors.red)),
+                label: const Text(
+                  'Log Out',
+                  style: TextStyle(color: Colors.red),
+                ),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.red),
                   shape: RoundedRectangleBorder(

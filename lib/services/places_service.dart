@@ -1,5 +1,5 @@
 // This service handles all Firestore CRUD operations for place listings.
-// UI widgets NEVER call Firestore directly — they go through this service.
+// UI widgets don't call Firestore directly, they go through this service.
 // The provider layer then wraps this service and exposes state to the UI.
 
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -1,10 +1,9 @@
-// lib/widgets/place_card.dart
 // Reusable card widget for displaying a place listing in a list.
 // Used by both DirectoryScreen and MyListingsScreen.
 // Accepts optional 'trailing' widget (for edit/delete buttons in My Listings).
 
 import 'package:flutter/material.dart';
-import '../models/place_model.dart';
+import '../../../models/place_model.dart';
 
 class PlaceCard extends StatelessWidget {
   final PlaceModel place;
@@ -49,8 +48,11 @@ class PlaceCard extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: const Color(0xFF1A2B4A),
-          child: Icon(_categoryIcon(place.category),
-              color: Colors.amber, size: 20),
+          child: Icon(
+            _categoryIcon(place.category),
+            color: Colors.amber,
+            size: 20,
+          ),
         ),
         title: Text(
           place.name,
@@ -59,12 +61,16 @@ class PlaceCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(place.category,
-                style: const TextStyle(color: Colors.amber, fontSize: 12)),
-            Text(place.address,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12)),
+            Text(
+              place.category,
+              style: const TextStyle(color: Colors.amber, fontSize: 12),
+            ),
+            Text(
+              place.address,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12),
+            ),
           ],
         ),
         trailing: trailing ?? const Icon(Icons.chevron_right),
