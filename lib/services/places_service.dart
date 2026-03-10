@@ -27,18 +27,13 @@ class PlacesService {
   /// Returns a real-time stream of places created by a specific user.
   /// Used in the "My Listings" screen.
   Stream<List<PlaceModel>> getPlacesByUser(String uid) {
-    return _placesRef
-        .where('createdBy', isEqualTo: uid)
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-          return snapshot.docs.map((doc) {
-            return PlaceModel.fromMap(
-              doc.id,
-              doc.data() as Map<String, dynamic>,
-            );
-          }).toList();
-        });
+    return _placesRef.where('createdBy', isEqualTo: uid).snapshots().map((
+      snapshot,
+    ) {
+      return snapshot.docs.map((doc) {
+        return PlaceModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
   }
 
   /// CREATE: Add a new place listing to Firestore.
